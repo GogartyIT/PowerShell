@@ -1,0 +1,36 @@
+# Ask the user to press the space bar to continue
+Write-Host "Press the space bar to continue..."
+while ($true) {
+    if ([console]::KeyAvailable -and [console]::ReadKey().Key -eq 'Spacebar') {
+        break
+    }
+}
+
+# Specify the directory
+$dir = "<ADD YOU FILE PATH HERE>"
+
+# Specify the date
+$date = Get-Date "31/12/2020"
+
+try {
+    # Get all the files in the directory that are older than the specified date
+    $files = Get-ChildItem -Path $dir -Recurse -File | Where-Object { $_.LastWriteTime -lt $date }
+
+    # Delete each file
+    foreach ($file in $files)
+    {
+        Remove-Item $file.FullName -Force
+    }
+}
+catch {
+    Write-Host "An error occurred: $_"
+}
+finally {
+    # Ask the user to press the space bar to continue
+    Write-Host "Job Completed, Press the space bar to exit."
+    while ($true) {
+        if ([console]::KeyAvailable -and [console]::ReadKey().Key -eq 'Spacebar') {
+            break
+        }
+    }
+}

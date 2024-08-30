@@ -1,0 +1,37 @@
+## NEED TO RUN THIS SCRIPT WITH ADMINISTRATOR PRIVILAGES. 
+
+# Set the path to the directory containing the .xls files
+$folderPath = "C:\Path\To\Your\Folder""
+
+# Create an instance of the Excel application
+$excel = New-Object -ComObject Excel.Application
+$excel.Visible = $false
+$excel.DisplayAlerts = $false
+
+# Get all .xls files in the folder
+$xlsFiles = Get-ChildItem -Path $folderPath -Filter *.xls
+
+# Loop through each .xls file
+foreach ($xlsFile in $xlsFiles) {
+    # Open the .xls file
+    $workbook = $excel.Workbooks.Open($xlsFile.FullName)
+    
+    # Define the new .xlsx file path
+    $newFilePath = [System.IO.Path]::ChangeExtension($xlsFile.FullName, ".xlsx")
+    
+    # Save the workbook as .xlsx
+    $workbook.SaveAs($newFilePath, 51) # 51 is the code for the .xlsx format
+    
+    # Close the workbook
+    $workbook.Close()
+}
+
+# Quit the Excel application
+$excel.Quit()
+
+# Release the COM object
+[System.Runtime.Interopservices.Marshal]::ReleaseComObject($excel)
+[System.GC]::Collect()
+[System.GC]::WaitForPendingFinalizers()
+
+Write-Host "Conversion completed."
